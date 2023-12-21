@@ -1,5 +1,5 @@
 import Banner from "./Components/Banner/Banner";
-import UsersShowcase from "./UsersShowcase/UsersShowcase";
+import UsersShowcase from "./Components/UsersShowcase/UsersShowcase";
 
 const Home = () => {
     return (

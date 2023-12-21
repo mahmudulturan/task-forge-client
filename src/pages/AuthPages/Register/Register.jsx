@@ -6,9 +6,11 @@ import { imageUpload } from "../../../api/utils";
 import authAnimation from '../../../assets/animation/AuthAnimation.json'
 import Lottie from "lottie-react";
 import { FaSpinner } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SocialLogin from "../Components/SocialLogin/SocialLogin";
 import useAuth from "../../../hooks/useAuth";
+import { saveUser } from "../../../api/auth";
+import toast from 'react-hot-toast';
 
 
 
@@ -23,27 +25,30 @@ const Register = () => {
         formState: { errors },
     } = useForm()
     const { createUser, updateUser } = useAuth()
+    const navigate = useNavigate()
 
     const onSubmit = async (data) => {
         if (!imageUrl) {
             return setErrorMessage("Upload a image of you!!")
         }
         const name = data.name;
-        const email = data.email;
+        const email = data.email.toLowerCase();
         const password = data.password;
-        const userData = { name, imageUrl, email, password }
+        const userData = { name, imageUrl, email }
         try {
             setSubmitLoading(true)
             setErrorMessage("")
             const { user } = await createUser(email, password)
             await updateUser(user, name, imageUrl)
+            await saveUser(userData);
             setSubmitLoading(false)
+            toast.success("Successfully Registered")
+            navigate('/')
         }
         catch (err) {
             setErrorMessage(err.message)
             setSubmitLoading(false)
         }
-        console.log(userData);
     }
 
     const uploadImage = async (e) => {
