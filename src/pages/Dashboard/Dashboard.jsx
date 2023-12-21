@@ -1,6 +1,8 @@
 import Container from "../../Components/Shared/Container/Container";
 import useAuth from "../../hooks/useAuth";
 import CreateTaskForm from "./Components/CreateTaskForm/CreateTaskForm";
+import Ongoing from "./Components/Ongoing/Ongoing";
+import Todo from "./Components/Todo/Todo";
 
 const Dashboard = () => {
     const { user } = useAuth();
@@ -12,6 +14,11 @@ const Dashboard = () => {
                 <h3 className="text-white text-4xl font-medium"><span className="text-primary-col font-semibold">{user?.displayName}</span>&apos;s Dashboard</h3>
             </div>
             <CreateTaskForm></CreateTaskForm>
+            <div className="flex gap-6 my-12">
+                <Todo></Todo>
+                <Ongoing></Ongoing>
+            </div>
+
         </Container>
     );
 };

@@ -1,9 +1,19 @@
 import { useForm } from "react-hook-form"
 import Button from "../../../../Components/Shared/Button/Button";
 import { useState } from "react";
+import useAuth from "../../../../hooks/useAuth";
+import { axiosSecure } from "../../../../api/axiosSecure";
+import toast from "react-hot-toast";
+import useTodo from "../../../../hooks/useTodo";
 
 const CreateTaskForm = () => {
     const [deadline, setDeadline] = useState()
+    const [errorMessage, setErrorMessage] = useState("")
+    const { register, handleSubmit, reset, formState: { errors } } = useForm()
+    const { user } = useAuth();
+    const { refetch } = useTodo();
+
+    //date formation for input field
     const defaultDate = new Date();
     const year = defaultDate.getFullYear();
     const month = String(defaultDate.getMonth() + 1).padStart(2, '0');
@@ -11,21 +21,27 @@ const CreateTaskForm = () => {
     const hours = String(defaultDate.getHours()).padStart(2, '0');
     const minutes = String(defaultDate.getMinutes()).padStart(2, '0');
     const formattedDefaultDate = `${year}-${month}-${day}T${hours}:${minutes}`;
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm()
 
-    const onSubmit = (data) => {
+
+    //handler of create new task
+    const onSubmit = async (data) => {
+        setErrorMessage("")
         const task = data.task;
         const description = data.description;
         const priority = data.priority;
         const taskDeadline = deadline;
-        const taskInfo = {
-            task, priority, taskDeadline, description
+        if (!taskDeadline) {
+            return setErrorMessage("Select task deadline")
         }
-        console.log(taskInfo);
+        const taskInfo = {
+            task, priority, taskDeadline, description, email: user?.email, progress: "todo"
+        }
+        const { data: res } = await axiosSecure.post('/create-task', taskInfo)
+        if (res.acknowledged) {
+            toast.success('Task Added')
+            reset()
+            refetch()
+        }
     }
 
     return (
@@ -49,6 +65,7 @@ const CreateTaskForm = () => {
                     {errors.task && <span className="font-medium text-lg text-red-400">You must have to input task name.</span>}
                     {errors.priority && <span className="font-medium text-lg text-red-400">You must have to select task priority.</span>}
                     {errors.description && <span className="font-medium text-lg text-red-400">You must have to write description.</span>}
+                    {errorMessage && <span className="font-medium text-lg text-red-400">{errorMessage}</span>}
 
                     <div className="text-center my-4">
                         <Button>Create Task</Button>
