@@ -13,6 +13,7 @@
     "axios": "^1.6.2",
     "firebase": "^10.7.1",
     "hamburger-react": "^2.5.0",
+    "ldrs": "^1.0.1",
     "localforage": "^1.10.0",
     "lottie-react": "^2.4.0",
     "match-sorter": "^6.3.1",

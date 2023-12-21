@@ -1,14 +1,22 @@
 import logo from '../../../assets/logo/task-forge-logo.png'
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { CgProfile } from "react-icons/cg";
 import { useEffect, useState } from 'react';
 import Hamburger from 'hamburger-react'
+import useAuth from '../../../hooks/useAuth';
+import toast from 'react-hot-toast';
 
 const Navbar = () => {
     const [menuIsOpen, setMenuIsOpen] = useState(false);
     const [usersMenuIsOpen, setUsersMenuIsOpen] = useState(false);
     const [isScroll, setIsScroll] = useState(false);
     const [prevPosition, setPrevPosition] = useState(0);
+    const { user, logOut } = useAuth();
+
+    const handleLogOut = async () => {
+        await logOut()
+        toast.success('Successfully Logout')
+    }
 
     const onScroll = () => {
         const currentPosition = window.scrollY;
@@ -54,16 +62,36 @@ const Navbar = () => {
                             {navLinks}
                         </div>
                         <div className='flex items-center justify-between gap-6 w-full lg:w-auto p-2'>
-                            <button className='text-text-col py-2 md:py-3 px-3 md:px-6 bg-secondery-col font-bold rounded hover:drop-shadow-2xl uppercase'>
-                                Get Started
-                            </button>
+
+                            <Link to='/dashboard'>
+                                <button className='text-text-col py-2 md:py-3 px-3 md:px-6 bg-secondery-col font-bold rounded hover:drop-shadow-2xl uppercase'>
+                                    Get Started
+                                </button>
+                            </Link>
 
                             {/* users dropdown */}
-                            <div className="avatar">
-                                <button onSubmit={() => setUsersMenuIsOpen(!usersMenuIsOpen)} className="w-14 rounded object-cover">
-                                    <CgProfile className='text-text-col text-5xl rounded w-full' />
-                                </button>
-                            </div>
+                            {
+                                user &&
+                                <div className="relative">
+                                    <button onClick={() => setUsersMenuIsOpen(!usersMenuIsOpen)} className="w-14 rounded object-cover">
+                                        {
+                                            user?.photoURL ?
+                                                <img src={user?.photoURL} className='rounded-full'></img>
+                                                :
+                                                <CgProfile className='text-text-col text-5xl rounded w-full' />
+                                        }
+                                    </button>
+                                    {
+                                        usersMenuIsOpen &&
+                                        <div className='bg-primary-col/60 absolute right-0'>
+                                            <button onClick={handleLogOut} className='text-text-col py-2 md:py-3 px-3 md:px-6 bg-secondery-col font-bold rounded hover:drop-shadow-2xl uppercase'>
+                                                LogOut
+                                            </button>
+                                        </div>
+                                    }
+
+                                </div>
+                            }
                             {/* menu dropdown */}
                             <div className='lg:hidden'>
                                 <Hamburger color={"white"} toggled={menuIsOpen} toggle={setMenuIsOpen} />

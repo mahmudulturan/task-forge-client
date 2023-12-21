@@ -5,6 +5,7 @@ import Register from "../pages/AuthPages/Register/Register";
 import Login from "../pages/AuthPages/Login/Login";
 import ErrorPage from "../pages/ErrorPage/ErrorPage";
 import Dashboard from "../pages/Dashboard/Dashboard";
+import PrivateRoute from "./PrivateRoute";
 
 const MainRoutes = createBrowserRouter([
     {
@@ -26,7 +27,7 @@ const MainRoutes = createBrowserRouter([
             },
             {
                 path: '/dashboard',
-                element: <Dashboard></Dashboard>
+                element: <PrivateRoute><Dashboard></Dashboard></PrivateRoute>
             },
         ]
     }

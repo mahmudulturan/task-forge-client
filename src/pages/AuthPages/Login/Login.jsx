@@ -2,11 +2,12 @@ import Container from "../../../Components/Shared/Container/Container";
 import { useForm } from "react-hook-form"
 import authAnimation from '../../../assets/animation/AuthAnimation.json'
 import Lottie from "lottie-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import SocialLogin from "../Components/SocialLogin/SocialLogin";
 import useAuth from "../../../hooks/useAuth";
 import { FaSpinner } from "react-icons/fa";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const Login = () => {
     const [submitLoading, setSubmitLoading] = useState(false)
@@ -17,7 +18,8 @@ const Login = () => {
         formState: { errors },
     } = useForm()
     const { loginUser } = useAuth();
-
+    const loc = useLocation();
+    const navigate = useNavigate();
 
     // handle login button
     const onSubmit = async (data) => {
@@ -28,6 +30,8 @@ const Login = () => {
             setSubmitLoading(true)
             await loginUser(email, password)
             setSubmitLoading(false)
+            toast.success('Sucessfully Login')
+            navigate(loc?.state?.from?.pathname || '/')
         }
         catch (err) {
             setErrorMessage(err.message)
@@ -71,7 +75,7 @@ const Login = () => {
                         </button>
                     </form>
                     <div>
-                        <span className="text-text-col text-left my-2">New to Task Forge? <Link className="text-primary-col" to="/register">Register here</Link></span>
+                        <span className="text-text-col text-left my-2">New to Task Forge? <Link state={{ from: loc?.state?.from }} className="text-primary-col" to="/register">Register here</Link></span>
                     </div>
                     <SocialLogin></SocialLogin>
                 </div>

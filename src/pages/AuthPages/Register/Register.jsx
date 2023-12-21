@@ -6,7 +6,7 @@ import { imageUpload } from "../../../api/utils";
 import authAnimation from '../../../assets/animation/AuthAnimation.json'
 import Lottie from "lottie-react";
 import { FaSpinner } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import SocialLogin from "../Components/SocialLogin/SocialLogin";
 import useAuth from "../../../hooks/useAuth";
 import { saveUser } from "../../../api/auth";
@@ -26,6 +26,7 @@ const Register = () => {
     } = useForm()
     const { createUser, updateUser } = useAuth()
     const navigate = useNavigate()
+    const loc = useLocation()
 
     const onSubmit = async (data) => {
         if (!imageUrl) {
@@ -43,7 +44,7 @@ const Register = () => {
             await saveUser(userData);
             setSubmitLoading(false)
             toast.success("Successfully Registered")
-            navigate('/')
+            navigate(loc?.state?.from?.pathname || '/')
         }
         catch (err) {
             setErrorMessage(err.message)
