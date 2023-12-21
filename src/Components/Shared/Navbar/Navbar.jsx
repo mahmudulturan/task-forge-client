@@ -14,7 +14,6 @@ const Navbar = () => {
         const currentPosition = window.scrollY;
         setIsScroll(currentPosition !== 0)
         setPrevPosition(currentPosition)
-        console.log(currentPosition);
     }
 
     useEffect(() => {
