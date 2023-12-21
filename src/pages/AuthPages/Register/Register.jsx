@@ -8,25 +8,42 @@ import Lottie from "lottie-react";
 import { FaSpinner } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import SocialLogin from "../Components/SocialLogin/SocialLogin";
+import useAuth from "../../../hooks/useAuth";
 
 
 
 const Register = () => {
     const [imageUrl, setImageUrl] = useState("");
     const [uploadLoading, setUploadLoading] = useState(false);
+    const [submitLoading, setSubmitLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState("");
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm()
+    const { createUser, updateUser } = useAuth()
 
-    const onSubmit = (data) => {
-        console.log(data);
+    const onSubmit = async (data) => {
         if (!imageUrl) {
-            console.log(true);
-            setErrorMessage("Upload a image of you!!")
+            return setErrorMessage("Upload a image of you!!")
         }
+        const name = data.name;
+        const email = data.email;
+        const password = data.password;
+        const userData = { name, imageUrl, email, password }
+        try {
+            setSubmitLoading(true)
+            setErrorMessage("")
+            const { user } = await createUser(email, password)
+            await updateUser(user, name, imageUrl)
+            setSubmitLoading(false)
+        }
+        catch (err) {
+            setErrorMessage(err.message)
+            setSubmitLoading(false)
+        }
+        console.log(userData);
     }
 
     const uploadImage = async (e) => {
@@ -35,6 +52,7 @@ const Register = () => {
             const { data } = await imageUpload(e.target.files[0])
             setImageUrl(data.display_url)
             setUploadLoading(false)
+            setErrorMessage("")
         }
         catch (err) {
             setUploadLoading(false)
@@ -106,7 +124,17 @@ const Register = () => {
                             errorMessage &&
                             <span className="text-red-400 mt-2 font-medium">{errorMessage}</span>
                         }
-                        <input disabled={uploadLoading} type="submit" className="py-3 px-6 my-2 outline-none rounded w-full bg-primary-col font-semibold cursor-pointer text-lg" value={"Register"} />
+                        <button disabled={uploadLoading || submitLoading} type="submit" className="py-3 px-6 my-2 outline-none rounded w-full bg-primary-col font-semibold text-lg">
+                            {
+                                submitLoading ?
+                                    <div className="flex items-center justify-center">
+
+                                        <FaSpinner className="animate-spin"></FaSpinner>
+                                    </div>
+                                    :
+                                    "Register"
+                            }
+                        </button>
                     </form>
                     <div>
                         <span className="text-text-col text-left my-2">Already have an account? <Link className="text-primary-col" to="/login">Login here</Link></span>

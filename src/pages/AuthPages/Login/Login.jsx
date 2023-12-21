@@ -4,16 +4,35 @@ import authAnimation from '../../../assets/animation/AuthAnimation.json'
 import Lottie from "lottie-react";
 import { Link } from "react-router-dom";
 import SocialLogin from "../Components/SocialLogin/SocialLogin";
+import useAuth from "../../../hooks/useAuth";
+import { FaSpinner } from "react-icons/fa";
+import { useState } from "react";
 
 const Login = () => {
+    const [submitLoading, setSubmitLoading] = useState(false)
+    const [errorMessage, setErrorMessage] = useState("");
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm()
+    const { loginUser } = useAuth();
 
-    const onSubmit = (data) => {
-        console.log(data);
+
+    // handle login button
+    const onSubmit = async (data) => {
+        const email = data.email;
+        const password = data.password;
+        try {
+            setErrorMessage("")
+            setSubmitLoading(true)
+            await loginUser(email, password)
+            setSubmitLoading(false)
+        }
+        catch (err) {
+            setErrorMessage(err.message)
+            setSubmitLoading(false)
+        }
 
     }
 
@@ -33,10 +52,23 @@ const Login = () => {
                         <div>
                             <label htmlFor="password" className="text-primary-col font-semibold text-xl"></label>
                             <input {...register("password", { required: true })} id="password" className="py-3 px-6 my-2 outline-none rounded w-full" type="password" placeholder="Type Your Password" />
-                            {errors.email && <span className="font-medium text-lg text-red-400">You must have to input your Password.</span>}
+                            {errors.password && <span className="font-medium text-lg text-red-400">You must have to input your Password.</span>}
                         </div>
 
-                        <input type="submit" className="py-3 px-6 my-2 outline-none rounded w-full bg-primary-col font-semibold cursor-pointer text-lg" value={"Login"} />
+                        {
+                            errorMessage &&
+                            <span className="text-red-400 mt-2 font-medium">{errorMessage}</span>
+                        }
+                        <button disabled={submitLoading} type="submit" className="py-3 px-6 my-2 outline-none rounded w-full bg-primary-col font-semibold text-lg">
+                            {
+                                submitLoading ?
+                                    <div className="flex items-center justify-center">
+                                        <FaSpinner className="animate-spin"></FaSpinner>
+                                    </div>
+                                    :
+                                    "Login"
+                            }
+                        </button>
                     </form>
                     <div>
                         <span className="text-text-col text-left my-2">New to Task Forge? <Link className="text-primary-col" to="/register">Register here</Link></span>
