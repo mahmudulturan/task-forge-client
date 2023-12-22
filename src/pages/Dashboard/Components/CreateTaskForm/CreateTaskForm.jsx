@@ -49,7 +49,7 @@ const CreateTaskForm = () => {
             <div className="max-w-3xl mx-auto">
 
                 <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="flex gap-2 my-2">
+                    <div className="flex flex-col md:flex-row gap-2 my-2">
                         <input {...register("task", { required: true })} type="text" placeholder="Task Name" className="py-3 px-6 w-full outline-none rounded" />
                         <select defaultValue="none" {...register("priority", { required: true, minLength: 5 })} className="py-3 px-6 w-full outline-none rounded" >
                             <option value="none" disabled>Select Priority Level</option>

@@ -1,42 +1,36 @@
 import { useQuery } from "@tanstack/react-query";
 import { axiosSecure } from "../../../../api/axiosSecure";
 import useAuth from "../../../../hooks/useAuth";
-import { CiCircleRemove } from "react-icons/ci";
+import { useDrop } from "react-dnd";
+import useTodo from "../../../../hooks/useTodo";
+import Table from "../Table/Table";
 
 const Ongoing = () => {
     const { user } = useAuth();
-    const { data: tasks } = useQuery({
+    const { refetch: todoRefetch } = useTodo()
+    const { data: tasks, refetch } = useQuery({
         queryKey: ['ongoing'], queryFn: async () => {
             const { data } = await axiosSecure.get(`/get-tasks/${user.email}?progressKey=ongoing`)
             return data
         }
     })
+    const [{ isOver }, drop] = useDrop(() => ({
+        accept: "task",
+        drop: (item) => changeItemProgress(item),
+        collect: (monitor) => ({
+            isOver: !!monitor.isOver()
+        })
+    }))
+    const changeItemProgress = async (item) => {
+        console.log(item._id);
+        await axiosSecure.patch(`/update-task/${item._id}`, { progress: "ongoing" })
+        refetch()
+        todoRefetch()
+    }
     return (
-        <div className="max-w-2xl bg-primary-col/15 shadow-2xl rounded w-full max-h-[40vh] overflow-auto">
+        <div ref={drop} className={`max-w-2xl  shadow-2xl rounded w-full max-h-[40vh] min-h-[40vh] overflow-auto ${isOver ? "bg-primary-col/35" : "bg-primary-col/15"}`}>
             <h3 className="text-white font-medium text-center text-2xl py-2">Ongoing</h3>
-            <table className="w-full ">
-                <thead className="text-text-col/100">
-                    <th>#</th>
-                    <th>Task Name</th>
-                    <th>Task Details</th>
-                    <th>Task Deadline</th>
-                    <th>Priority</th>
-                    <th> </th>
-                </thead>
-                <tbody className="text-text-col/85">
-                    {
-                        tasks?.map((task, indx) => <tr key={task._id} className={`${indx % 2 == 0 ? "bg-primary-col/35" : "bg-primary-col/15"}`}>
-                            <td className="px-2">{indx + 1}</td>
-                            <td className="text-lg py-2">{task.task}</td>
-                            <td className="max-w-40 overflow-auto">{task.description}</td>
-                            <td>{task.taskDeadline}</td>
-                            <td>{task.priority}</td>
-                            <td className="text-2xl"><button><CiCircleRemove></CiCircleRemove></button></td>
-
-                        </tr>)
-                    }
-                </tbody>
-            </table>
+            <Table tasks={tasks}></Table>
         </div>
     );
 };
