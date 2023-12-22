@@ -1,9 +1,9 @@
 import axios from "axios";
 
 export const axiosSecure = axios.create({
-    baseURL: "http://localhost:5000"
+    baseURL: "https://task-forge-server-two.vercel.app"
 })
 
 export const axiosPublic = axios.create({
-    baseURL: "http://localhost:5000"
+    baseURL: "https://task-forge-server-two.vercel.app"
 })
