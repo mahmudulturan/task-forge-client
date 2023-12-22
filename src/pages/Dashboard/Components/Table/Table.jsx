@@ -10,7 +10,7 @@ const Table = ({tasks}) => {
                 <th>Task Details</th>
                 <th>Task Deadline</th>
                 <th>Priority</th>
-                <th> </th>
+                <th></th>
             </thead>
             <tbody className="text-text-col/85 ">
                 {

@@ -27,12 +27,16 @@ const TableRow = ({ task, indx }) => {
     }
 
     return (
-        <tr key={task._id} ref={drag} draggable className={`${indx % 2 == 0 ? "bg-primary-col/35" : "bg-primary-col/15"} ${isDragging && "opacity-25"}`}>
+        <tr key={task._id} ref={drag} className={`${indx % 2 == 0 ? "bg-primary-col/35" : "bg-primary-col/15"} ${isDragging && "opacity-25"}`}>
             <td className="px-2">{indx}</td>
             <td className="text-lg py-2">{task.task}</td>
             <td className="max-w-40 overflow-auto">{task.description}</td>
             <td>{task.taskDeadline}</td>
-            <td>{task.priority}</td>
+            <td className=""><span className={`text-sm font-medium
+             ${task.priority == "Standard" && "bg-blue-500"}
+             ${task.priority == "Critical" && "bg-red-500"}
+             ${task.priority == "Minimal" && "bg-green-500"}
+              rounded-full px-2 py-1`}>{task.priority}</span></td>
             <td className="text-2xl"><button onClick={handleDelete}><CiCircleRemove></CiCircleRemove></button></td>
         </tr>
     );

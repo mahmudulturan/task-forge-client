@@ -17,7 +17,6 @@ const Complete = () => {
         })
     }))
     const changeItemProgress = async (item) => {
-        console.log(item._id);
         await axiosSecure.patch(`/update-task/${item._id}`, { progress: "complete" })
         refetch()
         todoRefetch()
@@ -25,7 +24,7 @@ const Complete = () => {
     }
     return (
         <div ref={drop} className={`max-w-2xl  shadow-2xl rounded w-full max-h-[40vh] min-h-[40vh] overflow-auto ${isOver ? "bg-primary-col/35" : "bg-primary-col/15"}`}>
-            <h3 className="text-white font-medium text-center text-2xl py-2">Ongoing</h3>
+            <h3 className="text-white font-medium text-center text-2xl py-2">Complete</h3>
             <Table tasks={tasks}></Table>
         </div>
     );

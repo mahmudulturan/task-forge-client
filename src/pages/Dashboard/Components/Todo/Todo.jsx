@@ -3,11 +3,13 @@ import useTodo from "../../../../hooks/useTodo";
 import useOngoing from "../../../../hooks/useOngoing";
 import { axiosSecure } from "../../../../api/axiosSecure";
 import Table from "../Table/Table";
+import useComplete from "../../../../hooks/useComplete";
 
 
 const Todo = () => {
     const { tasks, refetch } = useTodo();
     const { refetch: ongoingRefetch } = useOngoing()
+    const { refetch: completeRefetch } = useComplete()
     const [{ isOver }, drop] = useDrop(() => ({
         accept: "task",
         drop: (item) => changeItemProgress(item),
@@ -17,10 +19,10 @@ const Todo = () => {
     }))
     const changeItemProgress = async (item) => {
         console.log(item._id);
-        const res = await axiosSecure.patch(`/update-task/${item._id}`, { progress: "todo" })
+        await axiosSecure.patch(`/update-task/${item._id}`, { progress: "todo" })
         refetch()
         ongoingRefetch()
-        console.log(res);
+        completeRefetch()
     }
 
     return (

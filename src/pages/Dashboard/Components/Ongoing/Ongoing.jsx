@@ -4,10 +4,12 @@ import useAuth from "../../../../hooks/useAuth";
 import { useDrop } from "react-dnd";
 import useTodo from "../../../../hooks/useTodo";
 import Table from "../Table/Table";
+import useComplete from "../../../../hooks/useComplete";
 
 const Ongoing = () => {
     const { user } = useAuth();
     const { refetch: todoRefetch } = useTodo()
+    const { refetch: completeRefetch } = useComplete()
     const { data: tasks, refetch } = useQuery({
         queryKey: ['ongoing'], queryFn: async () => {
             const { data } = await axiosSecure.get(`/get-tasks/${user.email}?progressKey=ongoing`)
@@ -26,6 +28,7 @@ const Ongoing = () => {
         await axiosSecure.patch(`/update-task/${item._id}`, { progress: "ongoing" })
         refetch()
         todoRefetch()
+        completeRefetch()
     }
     return (
         <div ref={drop} className={`max-w-2xl  shadow-2xl rounded w-full max-h-[40vh] min-h-[40vh] overflow-auto ${isOver ? "bg-primary-col/35" : "bg-primary-col/15"}`}>
